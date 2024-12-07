@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/threadserver
+    username: admin
+    password: admin
+  jpa:
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+    hibernate:
+      ddl-auto: update
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always

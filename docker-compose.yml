@@ -1,0 +1,32 @@
+version: '3'
+services:
+  postgredb:
+    container_name: postgredb
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=threadserver
+    ports:
+      - 5432:5432
+    networks:
+      - threadapi
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - 5050:80
+    depends_on:
+      - postgredb
+    networks:
+      - threadapi
+
+networks:
+  threadapi:
+    driver: bridge

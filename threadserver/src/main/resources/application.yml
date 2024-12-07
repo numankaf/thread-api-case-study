@@ -1,0 +1,7 @@
+application:
+  title: Thread Server
+  version: 1.0.0
+
+spring:
+  profiles:
+    active: dev
