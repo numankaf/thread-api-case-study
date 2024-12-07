@@ -5,6 +5,7 @@ import com.threadserver.threads.ReceiverThread;
 import com.threadserver.threads.SenderThread;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -12,7 +13,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ThreadStarterService implements CommandLineRunner {
-
+    private final ApplicationContext applicationContext;
     private final ThreadService threadService;
 
     @Override
@@ -21,13 +22,17 @@ public class ThreadStarterService implements CommandLineRunner {
         threadEntities.forEach((threadEntity -> {
             switch (threadEntity.getType()) {
                 case SENDER -> {
-                    Thread thread = new Thread(new SenderThread(threadEntity.getPriority()));
+                    SenderThread senderThread = applicationContext.getBean(SenderThread.class);
+                    Thread thread = new Thread(senderThread);
                     thread.setName("Thread " + threadEntity.getId());
+                    //thread.setPriority(threadEntity.getPriority());
                     thread.start();
                 }
                 case RECEIVER -> {
-                    Thread thread = new Thread(new ReceiverThread(threadEntity.getPriority()));
+                    ReceiverThread receiverThread = applicationContext.getBean(ReceiverThread.class);
+                    Thread thread = new Thread(receiverThread);
                     thread.setName("Thread " + threadEntity.getId());
+                    //thread.setPriority(threadEntity.getPriority());
                     thread.start();
                 }
             }

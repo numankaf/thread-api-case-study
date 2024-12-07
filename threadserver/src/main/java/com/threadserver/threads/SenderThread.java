@@ -1,25 +1,30 @@
 package com.threadserver.threads;
 
 import com.threadserver.constants.ThreadConstants;
+import com.threadserver.service.QueueService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 
 @Slf4j
 @Data
+@Component
+@Scope("prototype")
 public class SenderThread implements Runnable{
-    private int priority;
+    @Autowired
+    private QueueService queueService;
 
     private volatile boolean running = true;
-    public SenderThread(Integer priority) {
-        this.priority = priority;
-    }
 
     @Override
     public void run() {
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
+                queueService.produce("Data");
                 log.info("Value produced by thread: {}", currentThread.getName());
                 Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {

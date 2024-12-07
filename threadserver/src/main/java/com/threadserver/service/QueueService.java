@@ -1,21 +1,24 @@
 package com.threadserver.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.BlockingQueue;
 
-@Component
+@Service
 @RequiredArgsConstructor
+@Slf4j
 public class QueueService {
-
-    private BlockingQueue<String> queue;
+    private final BlockingQueue<String> blockingQueue;
 
     public void produce(String data) throws InterruptedException{
-        queue.put(data);
+        blockingQueue.put(data);
+        log.info("Remaining Capacity : {}",blockingQueue.remainingCapacity());
     }
 
     public String consume() throws InterruptedException{
-        return queue.take();
+        return blockingQueue.take();
+
     }
 }
