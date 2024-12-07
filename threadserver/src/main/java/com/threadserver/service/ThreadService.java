@@ -1,7 +1,10 @@
 package com.threadserver.service;
 
+import com.threadserver.constants.ExceptionConstants;
 import com.threadserver.dto.thread.ThreadCreateDto;
+import com.threadserver.dto.thread.ThreadUpdateDto;
 import com.threadserver.entity.ThreadEntity;
+import com.threadserver.exception.domain.ThreadNotFoundException;
 import com.threadserver.repository.ThreadRepository;
 import com.threadserver.threads.ReceiverThread;
 import com.threadserver.threads.SenderThread;
@@ -26,13 +29,28 @@ public class ThreadService {
         for (int i = 0; i < threadCreateDto.getThreadNumber(); i++) {
             ThreadEntity thread = ThreadEntity.builder()
                     .type(threadCreateDto.getThreadType())
-                    .priority(0)
+                    .priority(1)
                     .isActive(true)
                     .build();
             threads.add(thread);
         }
         List<ThreadEntity> threadEntities = threadRepository.saveAll(threads);
         threadEntities.forEach(this::startThread);
+    }
+
+    public void updateThread(Long id, ThreadUpdateDto threadUpdateDto){
+        ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
+
+        threadRepository.save(threadEntity);
+        Thread thread = threadMapProviderService.getThread(id);
+    }
+
+    public void deleteThread(Long id){
+        ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
+        threadRepository.delete(threadEntity);
+        Thread thread = threadMapProviderService.getThread(id);
+        thread.interrupt();
+        threadMapProviderService.removeThread(id);
     }
 
     public List<ThreadEntity> findAllThreads(){
@@ -47,7 +65,10 @@ public class ThreadService {
 
         Thread thread = new Thread(runnable);
         thread.setName("Thread " + entity.getId());
+        thread.setPriority(entity.getPriority());
         thread.start();
         threadMapProviderService.putThread(entity.getId(), thread);
     }
+
+
 }
