@@ -18,6 +18,7 @@ public class QueueService {
     }
 
     public String consume() throws InterruptedException{
+
         return blockingQueue.take();
 
     }
