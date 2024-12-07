@@ -1,7 +1,7 @@
 package com.threadserver.service;
 
 import com.threadserver.dto.thread.ThreadCreateDto;
-import com.threadserver.entity.Thread;
+import com.threadserver.entity.ThreadEntity;
 import com.threadserver.repository.ThreadRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +17,9 @@ public class ThreadService {
     private final ThreadRepository threadRepository;
 
     public void createThreads(ThreadCreateDto threadCreateDto) {
-        List<Thread> threads = new ArrayList<>();
+        List<ThreadEntity> threads = new ArrayList<>();
         for (int i = 0; i < threadCreateDto.getThreadNumber(); i++) {
-            Thread thread = Thread.builder()
+            ThreadEntity thread = ThreadEntity.builder()
                     .type(threadCreateDto.getThreadType())
                     .priority(0)
                     .isActive(true)
@@ -27,5 +27,9 @@ public class ThreadService {
             threads.add(thread);
         }
         threadRepository.saveAll(threads);
+    }
+
+    public List<ThreadEntity> findAllThreads(){
+        return threadRepository.findAll();
     }
 }

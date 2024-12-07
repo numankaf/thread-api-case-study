@@ -2,16 +2,16 @@ package com.threadserver.entity;
 
 import com.threadserver.enums.ThreadType;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Entity()
 @Table(name = "thread")
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-public class Thread extends BaseAuditEntity{
+public class ThreadEntity extends BaseAuditEntity{
 
     @Column(name = "PRIORITY")
     private Integer priority;
