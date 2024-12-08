@@ -1,5 +1,6 @@
 package com.threadserver.service;
 
+import com.threadserver.dto.queue.QueueMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -10,14 +11,14 @@ import java.util.concurrent.BlockingQueue;
 @RequiredArgsConstructor
 @Slf4j
 public class QueueService {
-    private final BlockingQueue<String> blockingQueue;
+    private final BlockingQueue<QueueMetadata> blockingQueue;
 
-    public void produce(String data) throws InterruptedException{
+    public void produce(QueueMetadata data) throws InterruptedException{
         blockingQueue.put(data);
         log.info("Remaining Capacity : {}",blockingQueue.remainingCapacity());
     }
 
-    public String consume() throws InterruptedException{
+    public QueueMetadata consume() throws InterruptedException{
 
         return blockingQueue.take();
 

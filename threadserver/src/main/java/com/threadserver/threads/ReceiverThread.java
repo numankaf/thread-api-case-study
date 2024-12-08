@@ -1,6 +1,7 @@
 package com.threadserver.threads;
 
 import com.threadserver.constants.ThreadConstants;
+import com.threadserver.dto.queue.QueueMetadata;
 import com.threadserver.service.QueueService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +25,15 @@ public class ReceiverThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
-                log.info("Value  consumed by thread:{}", currentThread.getName());
+                QueueMetadata data = queueService.consume();
+                log.info("Value consumed: {}", data.toString());
                 Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {
                 log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
-                log.error("An unexpected error occurred in thread {}: {}", currentThread.getName(), e.getMessage(), e);
+                log.error("An unexpected error occurred in thread {}: {}", currentThread.getName(), e.getMessage());
             }
         }
     }
