@@ -5,6 +5,7 @@ import com.threadserver.dto.thread.ThreadCreateDto;
 import com.threadserver.dto.thread.ThreadUpdateDto;
 import com.threadserver.entity.ThreadEntity;
 import com.threadserver.exception.domain.ThreadNotFoundException;
+import com.threadserver.exception.domain.ThreadStatusException;
 import com.threadserver.repository.ThreadRepository;
 import com.threadserver.threads.ReceiverThread;
 import com.threadserver.threads.SenderThread;
@@ -45,8 +46,14 @@ public class ThreadService {
     public void updateThread(Long id, ThreadUpdateDto threadUpdateDto) {
         ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
         Thread thread = threadMapProviderService.getThread(id);
+
+        //cant update priority if thread is not alive
+        if (threadUpdateDto.getPriority() != null && !thread.isAlive()){
+            throw new ThreadStatusException(ExceptionConstants.THEAD_IS_NOT_ALIVE);
+        }
+
         //if priority is not null, update it.
-        if (threadUpdateDto.getPriority() != null && thread.isAlive()) {
+        if (threadUpdateDto.getPriority() != null) {
             threadEntity.setPriority(threadUpdateDto.getPriority());
             thread.setPriority(threadUpdateDto.getPriority());
         }

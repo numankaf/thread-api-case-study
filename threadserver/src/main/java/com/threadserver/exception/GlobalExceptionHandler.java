@@ -2,6 +2,7 @@ package com.threadserver.exception;
 
 import com.threadserver.common.HttpResponse;
 import com.threadserver.exception.domain.ThreadNotFoundException;
+import com.threadserver.exception.domain.ThreadStatusException;
 import com.threadserver.util.HttpResponseUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -41,5 +42,11 @@ public class GlobalExceptionHandler{
     public ResponseEntity<HttpResponse> handleThreadNotFoundException(ThreadNotFoundException exception) {
         log.error(exception.getMessage());
         return HttpResponseUtil.createHttpErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
+    }
+
+    @ExceptionHandler(ThreadStatusException.class)
+    public ResponseEntity<HttpResponse> handleThreadStatusException(ThreadStatusException exception) {
+        log.error(exception.getMessage());
+        return HttpResponseUtil.createHttpErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
 }
