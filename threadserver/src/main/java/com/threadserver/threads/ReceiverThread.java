@@ -24,6 +24,7 @@ public class ReceiverThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
+                //consume QueueMetadata
                 queueService.consume();
                 Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {

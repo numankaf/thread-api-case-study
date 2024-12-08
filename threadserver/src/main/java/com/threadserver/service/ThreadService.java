@@ -24,6 +24,7 @@ public class ThreadService {
     private final ThreadMapProviderService threadMapProviderService;
     private final ApplicationContext applicationContext;
 
+    //creates threads with the given number
     public void createThreads(ThreadCreateDto threadCreateDto) {
         List<ThreadEntity> threads = new ArrayList<>();
         for (int i = 0; i < threadCreateDto.getThreadNumber(); i++) {
@@ -34,23 +35,30 @@ public class ThreadService {
                     .build();
             threads.add(thread);
         }
+        //save to database
         List<ThreadEntity> threadEntities = threadRepository.saveAll(threads);
+        //start each thread
         threadEntities.forEach(this::startThread);
+        log.info("Threads are created. ThreadNumber : {}, threadType : {}", threadCreateDto.getThreadNumber(), threadCreateDto.getThreadType());
     }
 
     public void updateThread(Long id, ThreadUpdateDto threadUpdateDto) {
         ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
         Thread thread = threadMapProviderService.getThread(id);
-        if (threadUpdateDto.getPriority() != null) {
+        //if priority is not null, update it.
+        if (threadUpdateDto.getPriority() != null && thread.isAlive()) {
             threadEntity.setPriority(threadUpdateDto.getPriority());
             thread.setPriority(threadUpdateDto.getPriority());
         }
 
+        // if isActive not null, update it.
         if (threadUpdateDto.getIsActive() != null) {
             threadEntity.setIsActive(threadUpdateDto.getIsActive());
+            // restart thread
             if (threadUpdateDto.getIsActive() && !thread.isAlive()) {
                 startThread(threadEntity);
             }
+            //stop thread
             if (!threadUpdateDto.getIsActive() && thread.isAlive()) {
                 try {
                     thread.interrupt();
@@ -64,11 +72,22 @@ public class ThreadService {
         log.info("Thread is updated with id : {}", id);
     }
 
+    //deletes current thread by id
     public void deleteThread(Long id) {
         ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
+        //delete from database
         threadRepository.delete(threadEntity);
         Thread thread = threadMapProviderService.getThread(id);
-        thread.interrupt();
+        //stop thread
+        if (thread.isAlive()) {
+            try {
+                thread.interrupt();
+                thread.join();
+            } catch (InterruptedException e) {
+                log.error(e.getMessage());
+            }
+        }
+        //delete from threadMap
         threadMapProviderService.removeThread(id);
     }
 
@@ -76,6 +95,7 @@ public class ThreadService {
         return threadRepository.findAll();
     }
 
+    //starts thread if thread is active
     public void startThread(ThreadEntity entity) {
         Runnable runnable = switch (entity.getType()) {
             case SENDER -> applicationContext.getBean(SenderThread.class);

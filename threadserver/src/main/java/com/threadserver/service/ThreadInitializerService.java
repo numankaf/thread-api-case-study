@@ -14,6 +14,7 @@ import java.util.List;
 public class ThreadInitializerService implements CommandLineRunner {
     private final ThreadService threadService;
 
+    //find db records for threads, then start them in the ThreadService
     @Override
     public void run(String... args) throws Exception {
         List<ThreadEntity> threadEntities = threadService.findAllThreads();

@@ -28,6 +28,7 @@ public class SenderThread implements Runnable {
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
+                //produce new QueueMetadata
                 QueueMetadata data= QueueMetadata.builder()
                         .source(currentThread.getName())
                         .data(ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE))
