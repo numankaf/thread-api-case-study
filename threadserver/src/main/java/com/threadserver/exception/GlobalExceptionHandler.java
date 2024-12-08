@@ -49,4 +49,11 @@ public class GlobalExceptionHandler{
         log.error(exception.getMessage());
         return HttpResponseUtil.createHttpErrorResponse(HttpStatus.BAD_REQUEST, exception.getMessage());
     }
+
+    //handle any exception
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<HttpResponse> handleRuntimeException(Exception exception) {
+        log.error(exception.getMessage());
+        return HttpResponseUtil.createHttpErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, exception.getMessage());
+    }
 }
