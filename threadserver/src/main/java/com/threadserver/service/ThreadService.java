@@ -52,11 +52,17 @@ public class ThreadService {
                 startThread(threadEntity);
             }
             if (!threadUpdateDto.getIsActive() && thread.isAlive()) {
-                thread.interrupt();
+                try {
+                    thread.interrupt();
+                    thread.join();
+                } catch (InterruptedException e) {
+                    log.error(e.getMessage());
+                }
             }
         }
         threadRepository.save(threadEntity);
         log.info("Thread is updated with id : {}", id);
+        log.info("Active Threads : {}" , Thread.activeCount());
     }
 
     public void deleteThread(Long id) {
@@ -65,7 +71,6 @@ public class ThreadService {
         Thread thread = threadMapProviderService.getThread(id);
         thread.interrupt();
         threadMapProviderService.removeThread(id);
-        log.info("Thread deleted with id: {} ", id);
     }
 
     public List<ThreadEntity> findAllThreads() {
