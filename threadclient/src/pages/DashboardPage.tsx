@@ -1,8 +1,9 @@
+import DashboardComponent from '../components/DashboardComponent';
+
 const DashboardPage = () => {
   return (
-    <div className="card w-full flex justify-between">
-      <div>DashboardPage</div>
-      <div>DashboardPage</div>
+    <div className="card w-full">
+      <DashboardComponent></DashboardComponent>
     </div>
   );
 };

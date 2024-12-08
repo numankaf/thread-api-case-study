@@ -8,7 +8,7 @@ const AppLayout = () => {
       <AppSidebar></AppSidebar>
       <main className="surface-ground w-full">
         <AppTopbar></AppTopbar>
-        <div className="mt-5">
+        <div className="mt-5 ml-3 mr-3">
           <Outlet></Outlet>
         </div>
       </main>

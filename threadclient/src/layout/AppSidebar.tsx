@@ -1,3 +1,4 @@
+import { GiProcessor } from 'react-icons/gi';
 import { MdOutlineDashboard } from 'react-icons/md';
 import { SlDocs } from 'react-icons/sl';
 import { TbLogs } from 'react-icons/tb';
@@ -13,7 +14,7 @@ const AppSidebar = () => {
       className="shadow-md"
       collapsed={sidebarCollapsed}
       collapsedWidth="80px"
-      width="200px"
+      width="220px"
       backgroundColor="var(--surface-card)"
       rootStyles={{
         height: '100vh',
@@ -21,6 +22,12 @@ const AppSidebar = () => {
         border: '0',
       }}
     >
+      <div className="flex items-center text-primary p-6 w-[220px]">
+        <GiProcessor size={50} />
+        {!sidebarCollapsed && (
+          <span className="font-bold text-[20px]">THREAD APP</span>
+        )}
+      </div>
       <Menu
         rootStyles={{
           padding: '5px',

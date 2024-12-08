@@ -1,4 +1,5 @@
-import { Button } from 'primereact/button';
+import { GoSidebarCollapse, GoSidebarExpand } from 'react-icons/go';
+import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 import { useLayout } from '../hooks/useLayout';
 
 const AppTopbar = () => {
@@ -7,19 +8,30 @@ const AppTopbar = () => {
 
   return (
     <div className="h-[40px]">
-      <div className="flex justify-between">
-        AppTopbar
-        <div>
-          <Button
-            label="theme"
+      <div className="flex justify-end p-2">
+        <div className="flex gap-3">
+          <button
+            className="no-style-button hover:surface-hover rounded-sm"
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          >
+            {sidebarCollapsed ? (
+              <GoSidebarCollapse size={22} />
+            ) : (
+              <GoSidebarExpand size={22} />
+            )}
+          </button>
+          <button
+            className="no-style-button hover:surface-hover rounded-sm"
             onClick={() =>
               handleChangeTheme(theme === 'light' ? 'dark' : 'light')
             }
-          ></Button>
-          <Button
-            label="collapse"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-          ></Button>
+          >
+            {theme === 'light' ? (
+              <MdOutlineLightMode size={22} />
+            ) : (
+              <MdOutlineDarkMode size={22} />
+            )}
+          </button>
         </div>
       </div>
     </div>
