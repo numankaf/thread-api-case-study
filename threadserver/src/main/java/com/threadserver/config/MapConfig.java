@@ -12,5 +12,4 @@ public class MapConfig {
     public Map<Long, Thread> threadMap() {
         return new HashMap<>();
     }
-
 }

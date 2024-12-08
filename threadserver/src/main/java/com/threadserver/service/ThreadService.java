@@ -38,22 +38,37 @@ public class ThreadService {
         threadEntities.forEach(this::startThread);
     }
 
-    public void updateThread(Long id, ThreadUpdateDto threadUpdateDto){
+    public void updateThread(Long id, ThreadUpdateDto threadUpdateDto) {
         ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
-
-        threadRepository.save(threadEntity);
         Thread thread = threadMapProviderService.getThread(id);
+        if (threadUpdateDto.getPriority() != null) {
+            threadEntity.setPriority(threadUpdateDto.getPriority());
+            thread.setPriority(threadUpdateDto.getPriority());
+        }
+
+        if (threadUpdateDto.getIsActive() != null) {
+            threadEntity.setIsActive(threadUpdateDto.getIsActive());
+            if (threadUpdateDto.getIsActive() && !thread.isAlive()) {
+                startThread(threadEntity);
+            }
+            if (!threadUpdateDto.getIsActive() && thread.isAlive()) {
+                thread.interrupt();
+            }
+        }
+        threadRepository.save(threadEntity);
+        log.info("Thread is updated with id : {}", id);
     }
 
-    public void deleteThread(Long id){
+    public void deleteThread(Long id) {
         ThreadEntity threadEntity = threadRepository.findById(id).orElseThrow(() -> new ThreadNotFoundException(ExceptionConstants.THREAD_NOT_FOUND + id));
         threadRepository.delete(threadEntity);
         Thread thread = threadMapProviderService.getThread(id);
         thread.interrupt();
         threadMapProviderService.removeThread(id);
+        log.info("Thread deleted with id: {} ", id);
     }
 
-    public List<ThreadEntity> findAllThreads(){
+    public List<ThreadEntity> findAllThreads() {
         return threadRepository.findAll();
     }
 
@@ -62,15 +77,12 @@ public class ThreadService {
             case SENDER -> applicationContext.getBean(SenderThread.class);
             case RECEIVER -> applicationContext.getBean(ReceiverThread.class);
         };
-
         Thread thread = new Thread(runnable);
         thread.setName("Thread " + entity.getId());
         thread.setPriority(entity.getPriority());
-        if (entity.getIsActive()){
+        if (entity.getIsActive()) {
             thread.start();
         }
         threadMapProviderService.putThread(entity.getId(), thread);
     }
-
-
 }

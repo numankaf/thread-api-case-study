@@ -24,10 +24,10 @@ public class ReceiverThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
-                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
                 queueService.consume();
+                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {
-                log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
+                log.warn("ReceiverThread with name {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
@@ -36,8 +36,15 @@ public class ReceiverThread implements Runnable{
         }
     }
 
-    public void stop() {
-        running = false;
-        log.info("Stopping SenderThread...");
+    public void startThread(){
+        Thread currentThread = Thread.currentThread();
+        this.running = true;
+        log.info("SenderThread with name : {} is stopped.",currentThread.getName() );
+    }
+
+    public void stopThread(){
+        Thread currentThread = Thread.currentThread();
+        this.running = false;
+        log.info("ReceiverThread with name : {} is stopped.",currentThread.getName() );
     }
 }

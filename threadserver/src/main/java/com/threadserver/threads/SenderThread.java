@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Data
 @Component
 @Scope("prototype")
-public class SenderThread implements Runnable{
+public class SenderThread implements Runnable {
     @Autowired
     private QueueService queueService;
 
@@ -28,15 +28,15 @@ public class SenderThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
-                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
                 QueueMetadata data= QueueMetadata.builder()
                         .source(currentThread.getName())
                         .data(ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE))
                         .timestamp(new Timestamp(System.currentTimeMillis()))
                         .build();
                 queueService.produce(data);
+                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {
-                log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
+                log.warn("SenderThread with name {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
@@ -45,8 +45,15 @@ public class SenderThread implements Runnable{
         }
     }
 
-    public void stop() {
-        running = false;
-        log.info("Stopping SenderThread...");
+    public void startThread(){
+        Thread currentThread = Thread.currentThread();
+        this.running = true;
+        log.info("SenderThread with name : {} is started.",currentThread.getName() );
+    }
+
+    public void stopThread(){
+        Thread currentThread = Thread.currentThread();
+        this.running = false;
+        log.info("SenderThread with name : {} is stopped.",currentThread.getName() );
     }
 }

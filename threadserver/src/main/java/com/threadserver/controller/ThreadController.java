@@ -26,15 +26,15 @@ public class ThreadController {
     }
 
     @PostMapping()
-    public ResponseEntity<HttpResponse> createThreads(@Valid  @RequestBody ThreadCreateDto threadCreateDto){
+    public ResponseEntity<HttpResponse> createThreads(@Valid @RequestBody ThreadCreateDto threadCreateDto){
         threadService.createThreads(threadCreateDto);
         return HttpResponseUtil.createHttpResponse(HttpStatus.CREATED,"Threads are created successfully");
     }
 
-    @PatchMapping("/:id")
-    public ResponseEntity<HttpResponse> updateThread(@PathVariable Long id,@Valid  @RequestBody ThreadUpdateDto threadUpdateDto){
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpResponse> updateThread(@PathVariable Long id, @Valid @RequestBody ThreadUpdateDto threadUpdateDto) throws InterruptedException {
         threadService.updateThread(id, threadUpdateDto);
-        return HttpResponseUtil.createHttpResponse(HttpStatus.CREATED,"Thread is updated successfully");
+        return HttpResponseUtil.createHttpResponse(HttpStatus.OK,"Thread is updated successfully");
     }
 
     @DeleteMapping("/{id}")
