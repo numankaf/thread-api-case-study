@@ -1,7 +1,7 @@
-import { axiosBase } from '../api/axios';
-import { endpoints } from '../constants/endpoints';
-import { HttpResponse } from '../types/http-response';
-import { Thread, ThreadCreateDto, ThreadUpdateDto } from '../types/thread';
+import { axiosBase } from '../../api/axios';
+import { endpoints } from '../../constants/endpoints';
+import { HttpResponse } from '../../types/http-response';
+import { Thread, ThreadCreateDto, ThreadUpdateDto } from '../../types/thread';
 
 const useThreadApi = () => {
   const createThreads = async (dto: ThreadCreateDto): Promise<HttpResponse> => {

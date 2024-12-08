@@ -1,22 +1,32 @@
-import { PrimeReactProvider } from 'primereact/api';
-import { Button } from 'primereact/button';
-import './common/styles/main.css';
+import { createBrowserRouter, RouterProvider } from 'react-router';
 import './App.css';
+import AppLayout from './layout/AppLayout';
+import DashboardPage from './pages/DashboardPage';
+import DocsPage from './pages/DocsPage';
+import LogsPage from './pages/LogsPage';
+import './styles/main.css';
 
 function App() {
-  return (
-    <PrimeReactProvider>
-      <div className="flex items-center gap-2 ">
-        <Button label="Primary" />
-        <Button label="Secondary" severity="secondary" />
-        <Button label="Success" severity="success" />
-        <Button label="Info" severity="info" />
-        <Button label="Warning" severity="warning" />
-        <Button label="Help" severity="help" />
-        <Button label="Danger" severity="danger" />
-      </div>
-    </PrimeReactProvider>
-  );
+  const router = createBrowserRouter([
+    {
+      element: <AppLayout />,
+      children: [
+        {
+          path: '/dashboard',
+          element: <DashboardPage />,
+        },
+        {
+          path: '/logs',
+          element: <LogsPage />,
+        },
+        {
+          path: '/docs',
+          element: <DocsPage />,
+        },
+      ],
+    },
+  ]);
+  return <RouterProvider router={router} />;
 }
 
 export default App;
