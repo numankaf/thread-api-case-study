@@ -1,5 +1,6 @@
 import { PrimeReactProvider } from 'primereact/api';
 import { Button } from 'primereact/button';
+import './common/styles/main.css';
 import './App.css';
 
 function App() {
