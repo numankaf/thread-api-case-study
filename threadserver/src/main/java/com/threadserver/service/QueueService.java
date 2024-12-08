@@ -15,10 +15,20 @@ public class QueueService {
 
     public void produce(QueueMetadata data) throws InterruptedException{
         blockingQueue.put(data);
+        // synchronize logging only
+        synchronized (this) {
+            log.info("Value produced: {}", data);
+        }
     }
 
     public QueueMetadata consume() throws InterruptedException{
-        return blockingQueue.take();
+        Thread currentThread = Thread.currentThread();
+        QueueMetadata data = blockingQueue.take();
+        // synchronize logging only
+        synchronized (this) {
+            log.info("Value consumed: {} by thread : {}", data, currentThread.getName());
+        }
+        return data;
     }
 
 }

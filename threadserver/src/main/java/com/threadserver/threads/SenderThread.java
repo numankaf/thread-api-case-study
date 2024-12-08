@@ -35,7 +35,6 @@ public class SenderThread implements Runnable{
                         .timestamp(new Timestamp(System.currentTimeMillis()))
                         .build();
                 queueService.produce(data);
-                log.info("Value produced: {}", data.toString());
             } catch (InterruptedException e) {
                 log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();
