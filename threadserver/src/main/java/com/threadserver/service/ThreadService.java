@@ -66,7 +66,9 @@ public class ThreadService {
         Thread thread = new Thread(runnable);
         thread.setName("Thread " + entity.getId());
         thread.setPriority(entity.getPriority());
-        thread.start();
+        if (entity.getIsActive()){
+            thread.start();
+        }
         threadMapProviderService.putThread(entity.getId(), thread);
     }
 

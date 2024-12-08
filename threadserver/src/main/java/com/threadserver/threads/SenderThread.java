@@ -28,6 +28,7 @@ public class SenderThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
+                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
                 QueueMetadata data= QueueMetadata.builder()
                         .source(currentThread.getName())
                         .data(ThreadLocalRandom.current().nextInt(Integer.MIN_VALUE, Integer.MAX_VALUE))
@@ -35,7 +36,6 @@ public class SenderThread implements Runnable{
                         .build();
                 queueService.produce(data);
                 log.info("Value produced: {}", data.toString());
-                Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
             } catch (InterruptedException e) {
                 log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();

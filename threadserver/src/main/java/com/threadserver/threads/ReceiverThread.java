@@ -25,9 +25,9 @@ public class ReceiverThread implements Runnable{
         Thread currentThread = Thread.currentThread();
         while (running) {
             try {
-                QueueMetadata data = queueService.consume();
-                log.info("Value consumed: {}", data.toString());
                 Thread.sleep(ThreadConstants.FREQUENCY_IN_MS);
+                QueueMetadata data = queueService.consume();
+                log.info("Value consumed: {} by thread : {}", data.toString(), currentThread.getName());
             } catch (InterruptedException e) {
                 log.warn("Thread {} interrupted. Exiting...", currentThread.getName());
                 Thread.currentThread().interrupt();

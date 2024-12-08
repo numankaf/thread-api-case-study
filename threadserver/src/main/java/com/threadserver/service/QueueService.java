@@ -15,12 +15,10 @@ public class QueueService {
 
     public void produce(QueueMetadata data) throws InterruptedException{
         blockingQueue.put(data);
-        log.info("Remaining Capacity : {}",blockingQueue.remainingCapacity());
     }
 
     public QueueMetadata consume() throws InterruptedException{
-
         return blockingQueue.take();
-
     }
+
 }
