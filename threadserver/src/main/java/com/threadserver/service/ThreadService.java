@@ -62,7 +62,6 @@ public class ThreadService {
         }
         threadRepository.save(threadEntity);
         log.info("Thread is updated with id : {}", id);
-        log.info("Active Threads : {}" , Thread.activeCount());
     }
 
     public void deleteThread(Long id) {

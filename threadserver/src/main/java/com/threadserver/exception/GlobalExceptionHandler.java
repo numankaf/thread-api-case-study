@@ -3,6 +3,7 @@ package com.threadserver.exception;
 import com.threadserver.common.HttpResponse;
 import com.threadserver.exception.domain.ThreadNotFoundException;
 import com.threadserver.util.HttpResponseUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -11,8 +12,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler{
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -30,12 +33,13 @@ public class GlobalExceptionHandler{
             String message = error.getDefaultMessage();
             strBuilder.append(String.format("%s: %s\n", fieldName, message));
         });
-
+        log.error(strBuilder.substring(0, strBuilder.length()-1));
         return HttpResponseUtil.createHttpErrorResponse(HttpStatus.BAD_REQUEST,strBuilder.substring(0, strBuilder.length()-1));
     }
 
     @ExceptionHandler(ThreadNotFoundException.class)
     public ResponseEntity<HttpResponse> handleThreadNotFoundException(ThreadNotFoundException exception) {
+        log.error(exception.getMessage());
         return HttpResponseUtil.createHttpErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage());
     }
 }
