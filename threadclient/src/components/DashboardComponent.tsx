@@ -12,14 +12,14 @@ const DashboardComponent = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [threadsStatus, setThreadsStatus] = useState<ThreadsStatus>();
 
-  const fetchThreads = () => {
-    findAllThreads()
+  const fetchThreads = async () => {
+    await findAllThreads()
       .then((data) => {
         setThreads(data);
-        const senderThreads = threads.filter(
+        const senderThreads = data.filter(
           (thread) => thread.type === ThreadType.SENDER,
         );
-        const receiverThreads = threads.filter(
+        const receiverThreads = data.filter(
           (thread) => thread.type === ThreadType.RECEIVER,
         );
         const activeSenderThreads = senderThreads.filter(
@@ -50,7 +50,7 @@ const DashboardComponent = () => {
 
   const threadItemTemplate = (thread: Thread) => {
     return (
-      <div className="surface-hover rounded-md p-3 space-y-2">
+      <div className="surface-hover rounded-md p-3 space-y-2" key={thread.id}>
         <div className="flex items-center justify-between">
           <div className="font-semibold text-lg"> Thread {thread.id}</div>
           <Tag
@@ -95,52 +95,56 @@ const DashboardComponent = () => {
       <div className="card col-span-2" style={{ height: '12vh' }}>
         <div>Queue Statistics</div>
       </div>
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div className="pb-4 font-semibold text-lg text-yellow-500">
-            Sender Threads
-          </div>
-          <div className="flex gap-2">
-            <div className="flex items-center text-lg gap-1 text-green-500">
-              {threadsStatus?.activeSenderThreads}
-              <div className="rounded-full bg-green-500 w-5 h-5"></div>
+      {threadsStatus && (
+        <div className="card">
+          <div className="flex items-center justify-between">
+            <div className="pb-4 font-semibold text-lg text-yellow-500">
+              Sender Threads
             </div>
-            <div className="flex items-center text-lg gap-1 text-red-500">
-              {threadsStatus?.passiveSenderThreads}
-              <div className="rounded-full bg-red-500 w-5 h-5"></div>
+            <div className="flex gap-2">
+              <div className="flex items-center text-lg gap-1 text-green-500">
+                {threadsStatus.activeSenderThreads}
+                <div className="rounded-full bg-green-500 w-5 h-5"></div>
+              </div>
+              <div className="flex items-center text-lg gap-1 text-red-500">
+                {threadsStatus.passiveSenderThreads}
+                <div className="rounded-full bg-red-500 w-5 h-5"></div>
+              </div>
             </div>
           </div>
+          <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
+            <DataView
+              value={threadsStatus.senderThreads}
+              listTemplate={listTemplate}
+            ></DataView>
+          </ScrollPanel>
         </div>
-        <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
-          <DataView
-            value={threadsStatus?.senderThreads}
-            listTemplate={listTemplate}
-          ></DataView>
-        </ScrollPanel>
-      </div>
-      <div className="card ">
-        <div className="flex items-center justify-between">
-          <div className="pb-4 font-semibold text-lg text-teal-500">
-            Receiver Threads
-          </div>
-          <div className="flex gap-2">
-            <div className="flex items-center text-lg gap-1 text-green-500">
-              {threadsStatus?.activeReceiverThreads}
-              <div className="rounded-full bg-green-500 w-5 h-5"></div>
+      )}
+      {threadsStatus && (
+        <div className="card ">
+          <div className="flex items-center justify-between">
+            <div className="pb-4 font-semibold text-lg text-teal-500">
+              Receiver Threads
             </div>
-            <div className="flex items-center text-lg gap-1 text-red-500">
-              {threadsStatus?.passiveReceiverThreads}
-              <div className="rounded-full bg-red-500 w-5 h-5"></div>
+            <div className="flex gap-2">
+              <div className="flex items-center text-lg gap-1 text-green-500">
+                {threadsStatus.activeReceiverThreads}
+                <div className="rounded-full bg-green-500 w-5 h-5"></div>
+              </div>
+              <div className="flex items-center text-lg gap-1 text-red-500">
+                {threadsStatus.passiveReceiverThreads}
+                <div className="rounded-full bg-red-500 w-5 h-5"></div>
+              </div>
             </div>
           </div>
+          <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
+            <DataView
+              value={threadsStatus.receiverThreads}
+              listTemplate={listTemplate}
+            ></DataView>
+          </ScrollPanel>
         </div>
-        <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
-          <DataView
-            value={threadsStatus?.receiverThreads}
-            listTemplate={listTemplate}
-          ></DataView>
-        </ScrollPanel>
-      </div>
+      )}
     </div>
   );
 };
