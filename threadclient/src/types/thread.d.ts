@@ -15,8 +15,8 @@ export class ThreadCreateDto {
 }
 
 export class ThreadUpdateDto {
-  priority: number;
-  isActive: boolean;
+  priority?: number;
+  isActive?: boolean;
 }
 
 export class ThreadsStatus {

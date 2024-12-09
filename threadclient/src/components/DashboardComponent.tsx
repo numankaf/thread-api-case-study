@@ -1,18 +1,79 @@
 import { Button } from 'primereact/button';
+import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataView } from 'primereact/dataview';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Tag } from 'primereact/tag';
 import { useEffect, useState } from 'react';
 import { ThreadType } from '../enums/thread-type.enum';
 import useThreadApi from '../hooks/api/useThreadApi';
+import { useToast } from '../hooks/useToast';
 import { Thread, ThreadsStatus } from '../types/thread';
 import { formatDate } from '../utils/date-formatter';
 import ThreadCreateComponent from './ThreadCreateComponent';
+import ThreadUpdateComponent from './ThreadUpdateComponent';
 
 const DashboardComponent = () => {
-  const { findAllThreads } = useThreadApi();
+  const { showSuccessToast, showErrorToast } = useToast();
+  const { findAllThreads, updateThread, deleteThread } = useThreadApi();
   const [threadsStatus, setThreadsStatus] = useState<ThreadsStatus>();
   const [createVisible, setCreateVisible] = useState<boolean>(false);
+  const [updateVisible, setUpdateVisible] = useState<boolean>(false);
+  const [selectedTread, setSelectedThread] = useState<Thread | undefined>(
+    undefined,
+  );
+
+  const changeThreadStatus = async (id: number, isActive: boolean) => {
+    await updateThread(id, { isActive: isActive })
+      .then((data) => {
+        showSuccessToast(data.message);
+        fetchThreads();
+      })
+      .catch((e) => {
+        showErrorToast(e.response.data.message);
+      });
+  };
+
+  const deleteThreadById = async (id: number) => {
+    await deleteThread(id)
+      .then(() => {
+        showSuccessToast('Thread is deleted.');
+        fetchThreads();
+      })
+      .catch((e) => {
+        showErrorToast(e.response.data.message);
+      });
+  };
+
+  const confirmDeleteThread = (id: number) => {
+    confirmDialog({
+      message: 'Do you want to delete this thread?',
+      header: 'Thread Delete Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      defaultFocus: 'accept',
+      accept: () => deleteThreadById(id),
+    });
+  };
+
+  const confirmStartThread = (id: number) => {
+    confirmDialog({
+      message: 'Are you sure you want to start this thread?',
+      header: 'Thread Start Confirmation',
+      icon: 'pi pi-exclamation-triangle',
+      defaultFocus: 'accept',
+      accept: () => changeThreadStatus(id, true),
+    });
+  };
+
+  const confirmStopThread = (id: number) => {
+    confirmDialog({
+      message: 'Are you sure you want to stop this thread?',
+      header: 'Thread Stop Confirmation',
+      icon: 'pi pi-info-circle',
+      defaultFocus: 'reject',
+      acceptClassName: 'p-button-danger',
+      accept: () => changeThreadStatus(id, false),
+    });
+  };
   const fetchThreads = async () => {
     await findAllThreads()
       .then((data) => {
@@ -53,6 +114,44 @@ const DashboardComponent = () => {
       <div className="surface-hover rounded-md p-3 space-y-2" key={thread.id}>
         <div className="flex items-center justify-between">
           <div className="font-semibold text-lg"> Thread {thread.id}</div>
+          <div className="flex gap-2">
+            {thread.isActive && (
+              <Button
+                icon="pi pi-pencil"
+                severity="info"
+                onClick={() => {
+                  setSelectedThread(thread);
+                  setUpdateVisible(true);
+                }}
+              ></Button>
+            )}
+            {!thread.isActive && (
+              <Button
+                icon="pi pi-play-circle"
+                severity="success"
+                onClick={() => {
+                  confirmStartThread(thread.id);
+                }}
+              ></Button>
+            )}
+            {thread.isActive && (
+              <Button
+                icon="pi pi-stop-circle"
+                severity="warning"
+                onClick={() => {
+                  confirmStopThread(thread.id);
+                }}
+              ></Button>
+            )}
+            <Button
+              icon="pi pi-trash"
+              severity="danger"
+              onClick={() => confirmDeleteThread(thread.id)}
+            ></Button>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <div> Status : </div>
           <Tag
             value={thread.isActive ? 'ACTIVE' : 'PASSIVE'}
             severity={thread.isActive ? 'success' : 'danger'}
@@ -92,11 +191,21 @@ const DashboardComponent = () => {
 
   return (
     <>
+      <ConfirmDialog />
+
       <ThreadCreateComponent
         isVisible={createVisible}
         setIsVisible={setCreateVisible}
         loadData={fetchThreads}
       ></ThreadCreateComponent>
+      {selectedTread && (
+        <ThreadUpdateComponent
+          isVisible={updateVisible}
+          setIsVisible={setUpdateVisible}
+          thread={selectedTread}
+          loadData={fetchThreads}
+        ></ThreadUpdateComponent>
+      )}
       <div className="grid grid-cols-2 gap-x-4 ">
         <div className="col-span-2 font-bold text-lg text-primary">
           Queue Status

@@ -1,37 +1,38 @@
 import { Form, Formik } from 'formik';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
-import { Dropdown } from 'primereact/dropdown';
 import { InputNumber } from 'primereact/inputnumber';
 import { ReactNode } from 'react';
 import * as Yup from 'yup';
-import { threadTypes } from '../constants/dropdown-constants';
 import useThreadApi from '../hooks/api/useThreadApi';
 import { useToast } from '../hooks/useToast';
+import { Thread } from '../types/thread';
 
 interface Props {
   isVisible: boolean;
   setIsVisible(val: boolean): void;
   loadData(): void;
+  thread: Thread;
 }
-const createValidation = Yup.object().shape({
-  threadNumber: Yup.number()
-    .required('Thread Number Required.')
-    .min(1, 'Thread number should be at least 1.')
-    .max(100, 'Thread number should be less then 100.'),
-  threadType: Yup.object().required('Thread Type Required.'),
-});
-const ThreadCreateComponent = ({
+const ThreadUpdateComponent = ({
+  thread,
   isVisible,
   setIsVisible,
   loadData,
 }: Props) => {
-  const { createThreads } = useThreadApi();
+  const { updateThread } = useThreadApi();
   const { showSuccessToast, showErrorToast } = useToast();
+
+  const updateValidation = Yup.object().shape({
+    priority: Yup.number()
+      .required('Thread Priority Required.')
+      .min(1, 'Thread Priority should be at least 1.')
+      .max(10, 'Thread Priority should be less then 100.'),
+  });
 
   return (
     <Dialog
-      header="Create Threads"
+      header={`Update Thread : Thread ${thread.id}`}
       visible={isVisible}
       draggable={false}
       style={{ width: '25vw' }}
@@ -40,16 +41,13 @@ const ThreadCreateComponent = ({
     >
       <Formik
         initialValues={{
-          threadNumber: 1,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          threadType: null as any,
+          priority: thread.priority,
         }}
-        validationSchema={createValidation}
+        validationSchema={updateValidation}
         onSubmit={async (values, { setSubmitting }) => {
           setSubmitting(true);
-          createThreads({
-            threadNumber: values.threadNumber,
-            threadType: values.threadType.name,
+          updateThread(thread.id, {
+            priority: values.priority,
           })
             .then((data) => {
               showSuccessToast(data.message);
@@ -74,41 +72,22 @@ const ThreadCreateComponent = ({
         }) => (
           <Form className="space-y-4 md:space-y-4">
             <div className="flex flex-col w-full">
-              <label className="mb-2">Thread Number</label>
+              <label className="mb-2">Thread Priority</label>
               <InputNumber
-                id="threadNumber"
-                name="threadNumber"
+                id="priority"
+                name="priority"
                 className="w-full"
-                placeholder="Enter a Thread Number"
+                placeholder="Enter a priority "
                 onValueChange={handleChange}
                 onBlur={handleBlur}
-                value={values.threadNumber}
+                value={values.priority}
                 min={1}
-                max={100}
+                max={10}
               />
               <span className={'text-red-400 m-1'}>
-                {errors.threadNumber &&
-                  touched.threadNumber &&
-                  (errors.threadNumber as ReactNode)}
-              </span>
-            </div>
-            <div className="flex flex-col w-full">
-              <label className="mb-2">Thread Type</label>
-              <Dropdown
-                id="threadType"
-                name="threadType"
-                options={threadTypes}
-                optionLabel="name"
-                className="w-full"
-                placeholder="Select Thread Type"
-                onChange={handleChange}
-                onBlur={handleBlur}
-                value={values.threadType}
-              />
-              <span className={'text-red-400 m-1'}>
-                {errors.threadType &&
-                  touched.threadType &&
-                  (errors.threadType as ReactNode)}
+                {errors.priority &&
+                  touched.priority &&
+                  (errors.priority as ReactNode)}
               </span>
             </div>
             <div className="flex items-center justify-end gap-3">
@@ -137,4 +116,4 @@ const ThreadCreateComponent = ({
   );
 };
 
-export default ThreadCreateComponent;
+export default ThreadUpdateComponent;

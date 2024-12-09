@@ -99,7 +99,7 @@ public class ThreadService {
     }
 
     public List<ThreadEntity> findAllThreads() {
-        return threadRepository.findAll();
+        return threadRepository.findAllByOrderByIdDesc();
     }
 
     //starts thread if thread is active
