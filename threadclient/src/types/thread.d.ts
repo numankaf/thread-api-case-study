@@ -18,3 +18,12 @@ export class ThreadUpdateDto {
   priority: number;
   isActive: boolean;
 }
+
+export class ThreadsStatus {
+  senderThreads: Thread[];
+  receiverThreads: Thread[];
+  activeSenderThreads: number;
+  passiveSenderThreads: number;
+  activeReceiverThreads: number;
+  passiveReceiverThreads: number;
+}

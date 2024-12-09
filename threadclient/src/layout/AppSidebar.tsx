@@ -3,11 +3,12 @@ import { MdOutlineDashboard } from 'react-icons/md';
 import { SlDocs } from 'react-icons/sl';
 import { TbLogs } from 'react-icons/tb';
 import { Menu, MenuItem, Sidebar } from 'react-pro-sidebar';
-import { Link, useLocation } from 'react-router';
+import { Link, useLocation, useNavigate } from 'react-router';
 import { useLayout } from '../hooks/useLayout';
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { sidebarCollapsed } = useLayout();
   return (
     <Sidebar
@@ -22,7 +23,10 @@ const AppSidebar = () => {
         border: '0',
       }}
     >
-      <div className="flex items-center text-primary p-6 w-[220px]">
+      <div
+        className="flex items-center text-primary p-6 w-[220px] cursor-pointer"
+        onClick={() => navigate('/dashboard')}
+      >
         <GiProcessor size={50} />
         {!sidebarCollapsed && (
           <span className="font-bold text-[20px]">THREAD APP</span>

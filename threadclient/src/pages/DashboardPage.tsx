@@ -2,7 +2,7 @@ import DashboardComponent from '../components/DashboardComponent';
 
 const DashboardPage = () => {
   return (
-    <div className="card w-full">
+    <div className="w-full">
       <DashboardComponent></DashboardComponent>
     </div>
   );
