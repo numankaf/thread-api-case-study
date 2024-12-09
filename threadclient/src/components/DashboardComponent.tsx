@@ -1,3 +1,4 @@
+import { Button } from 'primereact/button';
 import { DataView } from 'primereact/dataview';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Tag } from 'primereact/tag';
@@ -6,16 +7,15 @@ import { ThreadType } from '../enums/thread-type.enum';
 import useThreadApi from '../hooks/api/useThreadApi';
 import { Thread, ThreadsStatus } from '../types/thread';
 import { formatDate } from '../utils/date-formatter';
+import ThreadCreateComponent from './ThreadCreateComponent';
 
 const DashboardComponent = () => {
   const { findAllThreads } = useThreadApi();
-  const [threads, setThreads] = useState<Thread[]>([]);
   const [threadsStatus, setThreadsStatus] = useState<ThreadsStatus>();
-
+  const [createVisible, setCreateVisible] = useState<boolean>(false);
   const fetchThreads = async () => {
     await findAllThreads()
       .then((data) => {
-        setThreads(data);
         const senderThreads = data.filter(
           (thread) => thread.type === ThreadType.SENDER,
         );
@@ -31,7 +31,7 @@ const DashboardComponent = () => {
         setThreadsStatus({
           senderThreads: senderThreads,
           receiverThreads: receiverThreads,
-          activeSenderThreads: activeReceiverThreads,
+          activeSenderThreads: activeSenderThreads,
           activeReceiverThreads: activeReceiverThreads,
           passiveSenderThreads: senderThreads.length - activeSenderThreads,
           passiveReceiverThreads:
@@ -91,61 +91,77 @@ const DashboardComponent = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-x-4 ">
-      <div className="card col-span-2" style={{ height: '12vh' }}>
-        <div>Queue Statistics</div>
+    <>
+      <ThreadCreateComponent
+        isVisible={createVisible}
+        setIsVisible={setCreateVisible}
+        loadData={fetchThreads}
+      ></ThreadCreateComponent>
+      <div className="grid grid-cols-2 gap-x-4 ">
+        <div className="col-span-2 font-bold text-lg text-primary">
+          Queue Status
+        </div>
+        <div className="card col-span-2" style={{ height: '10vh' }}></div>
+        <div className="col-span-2 flex items-center justify-between pb-2">
+          <div className="font-bold text-lg text-primary">Threads</div>
+          <Button
+            label="Create Threads"
+            icon="pi pi-plus"
+            onClick={() => setCreateVisible(true)}
+          ></Button>
+        </div>
+        {threadsStatus && (
+          <div className="card">
+            <div className="flex items-center justify-between">
+              <div className="pb-4 font-semibold text-lg text-yellow-500">
+                Sender Threads
+              </div>
+              <div className="flex gap-2">
+                <div className="flex items-center text-lg gap-1 text-green-500">
+                  {threadsStatus.activeSenderThreads}
+                  <div className="rounded-full bg-green-500 w-5 h-5"></div>
+                </div>
+                <div className="flex items-center text-lg gap-1 text-red-500">
+                  {threadsStatus.passiveSenderThreads}
+                  <div className="rounded-full bg-red-500 w-5 h-5"></div>
+                </div>
+              </div>
+            </div>
+            <ScrollPanel className="customscrollbar" style={{ height: '65vh' }}>
+              <DataView
+                value={threadsStatus.senderThreads}
+                listTemplate={listTemplate}
+              ></DataView>
+            </ScrollPanel>
+          </div>
+        )}
+        {threadsStatus && (
+          <div className="card ">
+            <div className="flex items-center justify-between">
+              <div className="pb-4 font-semibold text-lg text-teal-500">
+                Receiver Threads
+              </div>
+              <div className="flex gap-2">
+                <div className="flex items-center text-lg gap-1 text-green-500">
+                  {threadsStatus.activeReceiverThreads}
+                  <div className="rounded-full bg-green-500 w-5 h-5"></div>
+                </div>
+                <div className="flex items-center text-lg gap-1 text-red-500">
+                  {threadsStatus.passiveReceiverThreads}
+                  <div className="rounded-full bg-red-500 w-5 h-5"></div>
+                </div>
+              </div>
+            </div>
+            <ScrollPanel className="customscrollbar" style={{ height: '65vh' }}>
+              <DataView
+                value={threadsStatus.receiverThreads}
+                listTemplate={listTemplate}
+              ></DataView>
+            </ScrollPanel>
+          </div>
+        )}
       </div>
-      {threadsStatus && (
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div className="pb-4 font-semibold text-lg text-yellow-500">
-              Sender Threads
-            </div>
-            <div className="flex gap-2">
-              <div className="flex items-center text-lg gap-1 text-green-500">
-                {threadsStatus.activeSenderThreads}
-                <div className="rounded-full bg-green-500 w-5 h-5"></div>
-              </div>
-              <div className="flex items-center text-lg gap-1 text-red-500">
-                {threadsStatus.passiveSenderThreads}
-                <div className="rounded-full bg-red-500 w-5 h-5"></div>
-              </div>
-            </div>
-          </div>
-          <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
-            <DataView
-              value={threadsStatus.senderThreads}
-              listTemplate={listTemplate}
-            ></DataView>
-          </ScrollPanel>
-        </div>
-      )}
-      {threadsStatus && (
-        <div className="card ">
-          <div className="flex items-center justify-between">
-            <div className="pb-4 font-semibold text-lg text-teal-500">
-              Receiver Threads
-            </div>
-            <div className="flex gap-2">
-              <div className="flex items-center text-lg gap-1 text-green-500">
-                {threadsStatus.activeReceiverThreads}
-                <div className="rounded-full bg-green-500 w-5 h-5"></div>
-              </div>
-              <div className="flex items-center text-lg gap-1 text-red-500">
-                {threadsStatus.passiveReceiverThreads}
-                <div className="rounded-full bg-red-500 w-5 h-5"></div>
-              </div>
-            </div>
-          </div>
-          <ScrollPanel className="customscrollbar" style={{ height: '70vh' }}>
-            <DataView
-              value={threadsStatus.receiverThreads}
-              listTemplate={listTemplate}
-            ></DataView>
-          </ScrollPanel>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
