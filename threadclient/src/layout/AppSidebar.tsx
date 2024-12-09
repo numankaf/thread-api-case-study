@@ -12,7 +12,7 @@ const AppSidebar = () => {
   const { sidebarCollapsed } = useLayout();
   return (
     <Sidebar
-      className="shadow-md"
+      className="shadow-md "
       collapsed={sidebarCollapsed}
       collapsedWidth="80px"
       width="220px"
@@ -21,6 +21,7 @@ const AppSidebar = () => {
         height: '100vh',
         mixBlendMode: 'normal',
         border: '0',
+        position: 'fixed',
       }}
     >
       <div

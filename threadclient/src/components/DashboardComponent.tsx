@@ -87,7 +87,7 @@ const DashboardComponent = () => {
       return threadItemTemplate(thread);
     });
 
-    return <div className="grid grid-cols-3 gap-4">{list}</div>;
+    return <div className="grid grid-cols-2 gap-4">{list}</div>;
   };
 
   return (
@@ -101,7 +101,7 @@ const DashboardComponent = () => {
         <div className="col-span-2 font-bold text-lg text-primary">
           Queue Status
         </div>
-        <div className="card col-span-2" style={{ height: '10vh' }}></div>
+        <div className="card col-span-2"></div>
         <div className="col-span-2 flex items-center justify-between pb-2">
           <div className="font-bold text-lg text-primary">Threads</div>
           <Button
@@ -111,7 +111,7 @@ const DashboardComponent = () => {
           ></Button>
         </div>
         {threadsStatus && (
-          <div className="card">
+          <div className="card h-full">
             <div className="flex items-center justify-between">
               <div className="pb-4 font-semibold text-lg text-yellow-500">
                 Sender Threads
@@ -127,7 +127,7 @@ const DashboardComponent = () => {
                 </div>
               </div>
             </div>
-            <ScrollPanel className="customscrollbar" style={{ height: '65vh' }}>
+            <ScrollPanel style={{ height: '600px' }}>
               <DataView
                 value={threadsStatus.senderThreads}
                 listTemplate={listTemplate}
@@ -136,7 +136,7 @@ const DashboardComponent = () => {
           </div>
         )}
         {threadsStatus && (
-          <div className="card ">
+          <div className="card h-full ">
             <div className="flex items-center justify-between">
               <div className="pb-4 font-semibold text-lg text-teal-500">
                 Receiver Threads
@@ -152,7 +152,7 @@ const DashboardComponent = () => {
                 </div>
               </div>
             </div>
-            <ScrollPanel className="customscrollbar" style={{ height: '65vh' }}>
+            <ScrollPanel style={{ height: '600px' }}>
               <DataView
                 value={threadsStatus.receiverThreads}
                 listTemplate={listTemplate}

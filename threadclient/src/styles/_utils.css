@@ -109,16 +109,12 @@
   box-shadow: 0px 10px 40px rgba(41, 50, 65, 0.06);
 }
 
-.p-scrollpanel.customscrollbar .p-scrollpanel-wrapper {
-  border-right: 10px solid var(--surface-ground);
-}
-
-.p-scrollpanel.customscrollbar .p-scrollpanel-bar {
-  background-color: var(--primary-color);
-  opacity: 1;
-  transition: background-color 0.3s;
-}
-
-.p-scrollpanel.customscrollbar .p-scrollpanel-bar:hover {
-  background-color: var(--primary-color);
+.no-style-button {
+  background: none;
+  color: inherit;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
 }
