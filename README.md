@@ -63,12 +63,27 @@ This project can be run using docker-compose.yml file.
 
 ### Running Project
 
-Run the application via docker-compose.yml file
+Run the database via docker-compose.yml file
 
 ```sh
 git clone https://github.com/numankaf/thread-api-case-study.git
 cd thread-api-case-study
 docker-compose up --build
+```
+
+Run the server
+
+```sh
+cd threadserver
+mvn spring-boot:run
+```
+
+Run the client
+
+```sh
+cd threadclient
+npm install
+npm run dev
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
