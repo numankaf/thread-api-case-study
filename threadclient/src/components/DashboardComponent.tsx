@@ -1,11 +1,15 @@
 import { Button } from 'primereact/button';
 import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { DataView } from 'primereact/dataview';
+import { Knob } from 'primereact/knob';
 import { ScrollPanel } from 'primereact/scrollpanel';
 import { Tag } from 'primereact/tag';
 import { useEffect, useState } from 'react';
+import { LogColorMap } from '../constants/log-color-map';
+import { LogType } from '../enums/log-type.enum';
 import { ThreadType } from '../enums/thread-type.enum';
 import useThreadApi from '../hooks/api/useThreadApi';
+import { useSocketData } from '../hooks/useSocketData';
 import { useToast } from '../hooks/useToast';
 import { Thread, ThreadsStatus } from '../types/thread';
 import { formatDate } from '../utils/date-formatter';
@@ -14,6 +18,7 @@ import ThreadUpdateComponent from './ThreadUpdateComponent';
 
 const DashboardComponent = () => {
   const { showSuccessToast, showErrorToast } = useToast();
+  const { queueStatistics } = useSocketData();
   const { findAllThreads, updateThread, deleteThread } = useThreadApi();
   const [threadsStatus, setThreadsStatus] = useState<ThreadsStatus>();
   const [createVisible, setCreateVisible] = useState<boolean>(false);
@@ -210,7 +215,67 @@ const DashboardComponent = () => {
         <div className="col-span-2 font-bold text-lg text-primary">
           Queue Status
         </div>
-        <div className="card col-span-2"></div>
+        <div className="card col-span-2">
+          {queueStatistics && (
+            <>
+              <div className="flex gap-3 items-center">
+                <div className="flex flex-col items">
+                  <div className="text-primary text-lg font-semibold">
+                    Queue Capacity
+                  </div>
+                  <Knob
+                    value={queueStatistics.remaining}
+                    size={200}
+                    max={queueStatistics.capacity}
+                    strokeWidth={4}
+                    textColor="var(--primary-color)"
+                    valueTemplate={`${queueStatistics.remaining}`}
+                  />
+                </div>
+                <div className="grid grid-cols-5 w-full gap-5">
+                  <div className="flex flex-col gap-2 text-primary surface-hover p-3 rounded-md">
+                    <div className="uppercase text-lg">Current</div>
+                    <div className="text-3xl text-green-500">
+                      {queueStatistics.currentSize}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2  text-primary surface-hover p-3 rounded-md">
+                    <div className="uppercase text-lg">Remaining</div>
+                    <div className="text-3xl text-red-500">
+                      {queueStatistics.remaining}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 text-primary surface-hover p-3 rounded-md">
+                    <div className="uppercase text-lg">Capacity</div>
+                    <div className="text-3xl text-blue-500">
+                      {queueStatistics.capacity}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 text-primary surface-hover p-3 rounded-md">
+                    <div className="uppercase text-lg">Total Produced</div>
+                    <div
+                      className={`${
+                        LogColorMap[LogType.PRODUCE_MESSAGE]
+                      } text-3xl`}
+                    >
+                      {queueStatistics.totalProduced}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 text-primary surface-hover p-3 rounded-md">
+                    <div className="uppercase text-lg">Total Consumed</div>
+                    <div
+                      className={`${
+                        LogColorMap[LogType.CONSUME_MESSAGE]
+                      } text-3xl`}
+                    >
+                      {queueStatistics.totalConsumed}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
         <div className="col-span-2 flex items-center justify-between pb-2">
           <div className="font-bold text-lg text-primary">Threads</div>
           <Button

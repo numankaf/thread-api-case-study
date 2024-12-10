@@ -1,9 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { LogColorMap } from '../constants/log-color-map';
-import { useLogs } from '../hooks/useLogs';
+import { useSocketData } from '../hooks/useSocketData';
 
 const LogsComponent = () => {
-  const { logMessages } = useLogs();
+  const { logMessages } = useSocketData();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -22,8 +22,8 @@ const LogsComponent = () => {
         Thread Logs
       </div>
       <div
-        className="terminal h-[600px] overflow-y-scroll"
-        style={{ padding: '10px' }}
+        className="terminal overflow-y-scroll"
+        style={{ padding: '10px', height: 'calc(100vh - 150px)' }}
       >
         {logMessages.map((logMessage, index) => (
           <div

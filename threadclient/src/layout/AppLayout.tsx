@@ -16,7 +16,7 @@ const AppLayout = () => {
         }}
       >
         <AppTopbar></AppTopbar>
-        <div className="mt-5 ml-3 mr-3 ">
+        <div className="mt-5 ml-3 mr-3 h-full">
           <Outlet></Outlet>
         </div>
       </div>

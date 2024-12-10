@@ -1,7 +1,9 @@
 package com.threadserver.service;
 
+import com.threadserver.constants.QueueConstants;
 import com.threadserver.dto.log.LogMessageDto;
 import com.threadserver.dto.queue.QueueMetadata;
+import com.threadserver.dto.queue.QueueStatistics;
 import com.threadserver.enums.LogType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -16,12 +19,28 @@ import java.util.concurrent.BlockingQueue;
 public class QueueService {
     private final BlockingQueue<QueueMetadata> blockingQueue;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final AtomicInteger totalProduced = new AtomicInteger(0);
+    private final AtomicInteger totalConsumed = new AtomicInteger(0);
+
+    private void sendQueueStatistics() {
+        int currentSize = QueueConstants.CAPACITY - blockingQueue.remainingCapacity();
+
+        QueueStatistics queueStatistics = QueueStatistics.builder()
+                .remaining(blockingQueue.remainingCapacity())
+                .currentSize(currentSize)
+                .capacity(QueueConstants.CAPACITY)
+                .totalConsumed(totalConsumed.get())
+                .totalProduced(totalProduced.get())
+                .build();
+
+        messagingTemplate.convertAndSend("/topic/queueStatistics", queueStatistics);
+    }
 
     //produce a new QueueMetadata for the queue
     public void produce(QueueMetadata data) throws InterruptedException {
         blockingQueue.put(data);
+        totalProduced.incrementAndGet(); // Increment total consumed count
         Thread currentThread = Thread.currentThread();
-
         // synchronize logging only
         synchronized (this) {
             String logMessage = "Value %s produced by %s".formatted(data.toString(), currentThread.getName());
@@ -32,12 +51,14 @@ public class QueueService {
                     .build();
             messagingTemplate.convertAndSend("/topic/queueLog", logMessageDto);
         }
+        sendQueueStatistics();
     }
 
     //consume the QueueMetadata from the queue
     public QueueMetadata consume() throws InterruptedException {
         Thread currentThread = Thread.currentThread();
         QueueMetadata data = blockingQueue.take();
+        totalConsumed.incrementAndGet(); // Increment total consumed count
         // synchronize logging only
         synchronized (this) {
             String logMessage = "Value %s consumed by %s".formatted(data.toString(), currentThread.getName());
@@ -49,6 +70,7 @@ public class QueueService {
             messagingTemplate.convertAndSend("/topic/queueLog", logMessageDto);
 
         }
+        sendQueueStatistics();
         return data;
     }
 
