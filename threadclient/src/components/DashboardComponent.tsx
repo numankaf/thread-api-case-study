@@ -178,8 +178,8 @@ const DashboardComponent = () => {
             {thread.type}
           </div>
         </div>
-        <div>Oluşturulma Tarihi : {formatDate(thread.createdDate)}</div>
-        <div>Güncellenme Tarihi: {formatDate(thread.lastModifiedDate)}</div>
+        <div>Created At : {formatDate(thread.createdDate)}</div>
+        <div>Last Modified At: {formatDate(thread.lastModifiedDate)}</div>
       </div>
     );
   };
