@@ -1,4 +1,4 @@
-import { createBrowserRouter, RouterProvider } from 'react-router';
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
 import './App.css';
 import AppLayout from './layout/AppLayout';
 import DashboardPage from './pages/DashboardPage';
@@ -24,6 +24,10 @@ function App() {
           element: <DocsPage />,
         },
       ],
+    },
+    {
+      path: '*',
+      element: <Navigate to="/dashboard" replace={true} />,
     },
   ]);
   return <RouterProvider router={router} />;

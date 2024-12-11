@@ -78,6 +78,8 @@ cd threadserver
 mvn spring-boot:run
 ```
 
+Your server should be running at [http://localhost:8080/](http://localhost:8080/)
+
 Run the server tests
 
 ```sh
@@ -96,6 +98,8 @@ cd threadclient
 npm install
 npm run dev
 ```
+
+Your client should be running at [http://localhost:3001/](http://localhost:3001/)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
