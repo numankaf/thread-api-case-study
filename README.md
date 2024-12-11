@@ -85,6 +85,10 @@ cd threadserver
 mvn test
 ```
 
+Test Output
+
+<img src="docs/serverTest.png">
+
 Run the client
 
 ```sh
