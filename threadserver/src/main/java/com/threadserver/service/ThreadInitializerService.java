@@ -13,12 +13,14 @@ import java.util.List;
 @Slf4j
 public class ThreadInitializerService implements CommandLineRunner {
     private final ThreadService threadService;
-
+    private final QueueService queueService;
     //find db records for threads, then start them in the ThreadService
     @Override
     public void run(String... args) throws Exception {
         List<ThreadEntity> threadEntities = threadService.findAllThreads();
         threadEntities.forEach((threadService::startThread));
+        // send initial statistics to websocket too
+        queueService.sendQueueStatistics();
 
     }
 

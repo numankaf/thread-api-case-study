@@ -22,7 +22,7 @@ public class QueueService {
     private final AtomicInteger totalProduced = new AtomicInteger(0);
     private final AtomicInteger totalConsumed = new AtomicInteger(0);
 
-    private void sendQueueStatistics() {
+    public void sendQueueStatistics() {
         int currentSize = QueueConstants.CAPACITY - blockingQueue.remainingCapacity();
 
         QueueStatistics queueStatistics = QueueStatistics.builder()
