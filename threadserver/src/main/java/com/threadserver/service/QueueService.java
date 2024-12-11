@@ -74,4 +74,9 @@ public class QueueService {
         return data;
     }
 
+    public int getRemainingCapacity(){
+        return blockingQueue.remainingCapacity();
+    }
+
+
 }
