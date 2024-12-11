@@ -78,6 +78,13 @@ cd threadserver
 mvn spring-boot:run
 ```
 
+Run the server tests
+
+```sh
+cd threadserver
+mvn test
+```
+
 Run the client
 
 ```sh

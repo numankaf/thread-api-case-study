@@ -26,7 +26,7 @@ public class ThreadService {
     private final ApplicationContext applicationContext;
 
     //creates threads with the given number
-    public void createThreads(ThreadCreateDto threadCreateDto) {
+    public List<ThreadEntity> createThreads(ThreadCreateDto threadCreateDto) {
         List<ThreadEntity> threads = new ArrayList<>();
         for (int i = 0; i < threadCreateDto.getThreadNumber(); i++) {
             ThreadEntity thread = ThreadEntity.builder()
@@ -41,6 +41,7 @@ public class ThreadService {
         //start each thread
         threadEntities.forEach(this::startThread);
         log.info("Threads are created. ThreadNumber : {}, threadType : {}", threadCreateDto.getThreadNumber(), threadCreateDto.getThreadType());
+        return threadEntities;
     }
 
     public void updateThread(Long id, ThreadUpdateDto threadUpdateDto) {
@@ -86,7 +87,7 @@ public class ThreadService {
         threadRepository.delete(threadEntity);
         Thread thread = threadMapProviderService.getThread(id);
         //stop thread
-        if (thread.isAlive()) {
+        if (thread != null && thread.isAlive()) {
             try {
                 thread.interrupt();
                 thread.join();
